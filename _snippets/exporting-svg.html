@@ -2,5 +2,10 @@
 title: SVG
 ---
 
-<p>
-</p>
+<script>
+  var m = require('makerjs');
+  var model = new m.models.RoundRectangle(100,50,10);
+  
+  document.write(m.exporter.toSVG(model));
+  
+</script>
