@@ -8,6 +8,24 @@ title: SVG
   
   document.write(m.exporter.toSVG(model));
   
-  document.write(m.exporter.toSVG(model, { useSvgPathOnly: false, annotate: true }));
+  document.write(m.exporter.toSVG(model, { fill: 'orange' }));
   
+  document.write(m.exporter.toSVG(model, { origin: [25, 25] }));
+  
+  document.write(m.exporter.toSVG(model, { scale: 2 }));
+  
+  document.write(m.exporter.toSVG(model, { stroke: 'red' }));
+  
+  document.write(m.exporter.toSVG(model, { stroke: 'red', strokeWidth: 4 }));
+  
+  document.write(m.exporter.toSVG(model, { units: 'mm' }));
+  
+  document.write(m.exporter.toSVG(model, { useSvgPathOnly: false, scale: 2 }));
+  
+  document.write(m.exporter.toSVG(model, { useSvgPathOnly: false, annotate: true, fontSize: '14px' }));
+  
+  document.write(m.exporter.toSVG(model, { viewBox: false }));
+
+  document.write(m.exporter.toSVG(model, { viewBox: true }));
+
 </script>
