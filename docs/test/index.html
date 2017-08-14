@@ -17,6 +17,7 @@
     <script type="text/javascript" src="/maker.js/docgen/livedoc.js"></script>
 
 <script type="text/javascript">
+	var makerjs = require('makerjs');
 	var toSVG = makerjs.exporter.toSVG;
 	makerjs.exporter.toSVG = function(item, options) {
 		if (makerjs.isModel(item)) {
