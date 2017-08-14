@@ -1,0 +1,1241 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Maker.js - Basic Drawing</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/maker.js/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/maker.js/stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/maker.js/stylesheets/tsd.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/maker.js/stylesheets/highlight.css" media="screen" />
+    <link rel="alternate" type="application/rss+xml" title="Maker.js" href="/maker.js/feed.xml" />
+    <script type="text/javascript" src="/maker.js/target/js/browser.maker.js"></script>
+    <script type="text/javascript" src="/maker.js/external/bezier-js/bezier.js"></script>
+    <script type="text/javascript" src="/maker.js/external/opentype/opentype.js"></script>
+    <script type="text/javascript" src="/maker.js/docgen/livedoc.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="inner">
+            <a href="/maker.js"><img class="logo" src="/maker.js/images/makerjs-blue.png" /></a>
+            <h2>Maker.js, a <a href="http://microsoft.com/garage">Microsoft Garage</a> project, is a JavaScript library for creating and sharing modular line drawings for CNC and laser cutters.</h2>
+            <a href="https://github.com/Microsoft/maker.js" class="button"><small>View project on</small> GitHub</a>
+            <ul>
+                <li><a href="/maker.js/#content">Features</a></li>
+                <li><a href="/maker.js/demos/#content">Demos</a></li>
+                <li><a href="/maker.js/docs/#content">Documentation</a></li>
+                <li><a href="https://github.com/Microsoft/maker.js">Source&nbsp;Code</a></li>
+            </ul>
+
+            <a class="github-button" href="https://github.com/Microsoft/maker.js" data-style="mega" data-count-href="/Microsoft/maker.js/stargazers" data-count-api="/repos/Microsoft/maker.js#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star Microsoft/maker.js on GitHub">Star</a>
+
+        </div>
+    </header>
+
+    <a name="content"></a>
+
+    <div id="content-wrapper">
+        <div class="inner clearfix">
+            <section id="main-content">
+
+                <h1>Basic Drawing</h1>
+
+<div class="container container-main toggle-visibilityprivate toggle-public">
+<section class="xtsd-panel-group tsd-index-group">
+	<section class="tsd-panel tsd-index-panel">
+		<div class="tsd-index-content">
+			<section class="tsd-index-section ">
+				<ul class="tsd-index-list">
+<li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Points" class="tsd-kind-icon">Points</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Paths" class="tsd-kind-icon">Paths</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Basic rendering in SVG" class="tsd-kind-icon">Basic rendering in SVG</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Models" class="tsd-kind-icon">Models</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Path constructors" class="tsd-kind-icon">Path constructors</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Path independence and Chains" class="tsd-kind-icon">Path independence and Chains</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Built-in models" class="tsd-kind-icon">Built-in models</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Moving" class="tsd-kind-icon">Moving</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Basic modeling" class="tsd-kind-icon">Basic modeling</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#It's Just JSON" class="tsd-kind-icon">It's Just JSON</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Units" class="tsd-kind-icon">Units</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Measuring" class="tsd-kind-icon">Measuring</a></li><li class="tsd-kind-variable tsd-parent-kind-module"><a href="#Frequently used functions" class="tsd-kind-icon">Frequently used functions</a></li>
+				</ul>
+			</section>
+		</div>
+	</section>
+</section>
+
+<section class="tsd-panel-group tsd-member-group ">
+
+<section class="tsd-panel tsd-member">
+    <a name="Points" ></a>
+    <h3>Points</h3>
+    <div class="tsd-comment tsd-typography"><p>A point is represented by an array with 2 elements. The first element is x, the second element is y.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span></code></pre></figure>
+
+<h4>Coordinates</h4>
+
+<p>Maker.js uses the same coordinate system from basic mathematics and traditional drafting, 
+where x values increase from left to right, and y values increase from bottom to top. Negative values are allowed.</p>
+
+<script>
+var makerjs = require('makerjs');
+
+function arrow(id) {
+    this.paths = {};
+    this.paths[id] = new makerjs.paths.Line([0, 0], [100, 0]);
+    this.paths[''] = new makerjs.paths.Line([90, -10], [100, 0]);
+    this.paths[' '] = new makerjs.paths.Line([90, 10], [100, 0]);
+}
+
+var model = {
+    models: {
+        x1: new arrow('+x'),
+        y1: makerjs.model.rotate(new arrow('+y'), 90, [0, 0]),
+        x2: makerjs.model.rotate(new arrow('-x'), 180, [0, 0]),
+        y2: makerjs.model.rotate(new arrow('-y'), 270, [0, 0])
+    }
+};
+
+var svg = makerjs.exporter.toSVG(model, { annotate: true, useSvgPathOnly: false });
+
+document.write('<div class="coordinates">' + svg + '</div>');
+</script>
+
+<p>Note that the SVG coordinate system is slightly different (Y values increase from top to bottom, and negative values do not appear), 
+but Maker.js will handle that for us automatically.</p>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/points.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Paths" ></a>
+    <h3>Paths</h3>
+    <div class="tsd-comment tsd-typography"><p>A path is represented by an object with these mandatory properties:</p>
+
+<ul>
+  <li>type: string</li>
+  <li>origin: point</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'myType'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> 
+ <span class="p">};</span></code></pre></figure>
+
+<hr/>
+
+<h4>Line</h4>
+
+<p>A line is a path with the type <b>"line"</b> and this additional property:</p>
+
+<ul>
+  <li>end: point</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> 
+ <span class="p">};</span></code></pre></figure>
+
+<h4>Circle</h4>
+
+<p>A circle is a path with the type <b>"circle"</b> and this additional property:</p>
+
+<ul>
+  <li>radius: number</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="na">radius</span><span class="p">:</span> <span class="mi">1</span>
+ <span class="p">};</span></code></pre></figure>
+
+<h4>Arc</h4>
+
+<p>An arc is a path with the type <b>"arc"</b> and these additional properties:</p>
+
+<ul>
+  <li>radius: number</li>
+  <li>startAngle: number</li>
+  <li>endAngle: number</li>
+</ul>
+
+<p>Note: Property names are case-sensitive.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">arc</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'arc'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="na">radius</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="na">startAngle</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="na">endAngle</span><span class="p">:</span> <span class="mi">45</span>
+ <span class="p">};</span></code></pre></figure>
+
+<i>(additional optional properties covered in advanced lessons)</i>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/paths.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Basic rendering in SVG" ></a>
+    <h3>Basic rendering in SVG</h3>
+    <div class="tsd-comment tsd-typography"><p>Call the <b>makerjs.exporter.toSVG</b> function and pass your path as a parameter:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//renders a line</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+ <span class="p">};</span>
+ 
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>You may also call <b>makerjs.exporter.toSVG</b> with an array of paths as a parameter:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//renders a line and a circle</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+ <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="na">radius</span><span class="p">:</span> <span class="mi">50</span>
+ <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">pathArray</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">circle</span> <span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">pathArray</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/basic-rendering-in-svg.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Models" ></a>
+    <h3>Models</h3>
+    <div class="tsd-comment tsd-typography"><p>Models are the heart of Maker.js. A model is represented by an object with these optional properties:</p>
+
+<ul>
+  <li><b>origin</b>: point</li>
+  <li><b>paths</b>: object map of paths</li>
+  <li><b>models</b>: object map of models</li>
+</ul>
+
+<p>Let's look at <b>paths</b> first, using the example above.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a line and circle in a model</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+ <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="na">radius</span><span class="p">:</span> <span class="mi">50</span>
+ <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">pathObject</span> <span class="o">=</span> <span class="p">{</span> <span class="na">myLine</span><span class="p">:</span> <span class="nx">line</span><span class="p">,</span> <span class="na">myCircle</span><span class="p">:</span> <span class="nx">circle</span> <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span> <span class="na">paths</span><span class="p">:</span> <span class="nx">pathObject</span> <span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Note that we can also pass a model to <b>makerjs.exporter.toSVG</b>.</p>
+
+<p>If we wrap our model code in a function we can call it multiple times. There are several ways to do this. 
+First we will leave the code as is, and return the <b>model</b> variable.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model created by a function</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">myModel</span><span class="p">()</span> <span class="p">{</span>
+
+ <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+   <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="na">radius</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">pathObject</span> <span class="o">=</span> <span class="p">{</span> <span class="na">myLine</span><span class="p">:</span> <span class="nx">line</span><span class="p">,</span> <span class="na">myCircle</span><span class="p">:</span> <span class="nx">circle</span> <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span> <span class="na">paths</span><span class="p">:</span> <span class="nx">pathObject</span> <span class="p">};</span>
+ 
+ <span class="k">return</span> <span class="nx">model</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">myModel</span><span class="p">());</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<p>Alternatively, we can change our function to be usable with the <b>new</b> operator, 
+and our model properties are set using the <b>this</b> keyword:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model created by a function, using the 'this' keyword</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">myModel</span><span class="p">()</span> <span class="p">{</span>
+
+ <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+   <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="na">radius</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">pathObject</span> <span class="o">=</span> <span class="p">{</span> <span class="na">myLine</span><span class="p">:</span> <span class="nx">line</span><span class="p">,</span> <span class="na">myCircle</span><span class="p">:</span> <span class="nx">circle</span> <span class="p">};</span>
+
+<span class="c1">//set properties using the "this" keyword</span>
+ <span class="k">this</span><span class="p">.</span><span class="nx">paths</span> <span class="o">=</span> <span class="nx">pathObject</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//note we are using the "new" operator</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="k">new</span> <span class="nx">myModel</span><span class="p">());</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<p>The example output should be the same as above. While we changed the way we defined our model, 
+we haven't yet changed the functionality:</p>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Now we are better set up to look at <b>models</b> and <b>origin</b>.
+We will create a new model which has 2 instances of myModel:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render 2 instances of the same model</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">myModel</span><span class="p">()</span> <span class="p">{</span>
+
+ <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+   <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="p">{</span> 
+   <span class="na">type</span><span class="p">:</span> <span class="s1">'circle'</span><span class="p">,</span> 
+   <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="na">radius</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="p">};</span>
+
+ <span class="kd">var</span> <span class="nx">pathObject</span> <span class="o">=</span> <span class="p">{</span> <span class="na">myLine</span><span class="p">:</span> <span class="nx">line</span><span class="p">,</span> <span class="na">myCircle</span><span class="p">:</span> <span class="nx">circle</span> <span class="p">};</span>
+ 
+<span class="c1">//set properties using the "this" keyword</span>
+ <span class="k">this</span><span class="p">.</span><span class="nx">paths</span> <span class="o">=</span> <span class="nx">pathObject</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">model1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">myModel</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">model2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">myModel</span><span class="p">();</span>
+
+<span class="c1">//they will be on top of each other, so let's move the origin</span>
+<span class="nx">model2</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"myModel1"</span><span class="p">:</span> <span class="nx">model1</span><span class="p">,</span> <span class="s2">"myModel2"</span><span class="p">:</span> <span class="nx">model2</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<i>(additional optional properties covered in advanced lessons)</i>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/models.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Path constructors" ></a>
+    <h3>Path constructors</h3>
+    <div class="tsd-comment tsd-typography"><p>
+In the example code above we used plain old JavaScript objects to create paths and models. 
+Notice that we didn't need to use a special constructor provided by Maker.js to create either a path or a model.
+This is an intentional aspect of Maker.js, that you can decide how to create your objects.
+To make these plain objects work with Maker.js, they needed to use the property names specified above.
+</p>
+
+<p>
+We also illustrated 3 ways of defining an object: using a var, using a function that returns a var, 
+and using a constructor function (for use by the <b>new</b> keyword). Let's revisit our simple line path example, 
+and convert it to a constructor function.
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a line</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="p">{</span> 
+  <span class="na">type</span><span class="p">:</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="na">origin</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="na">end</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+ <span class="p">};</span>
+ 
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a line created by a function</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">line</span><span class="p">()</span> <span class="p">{</span> 
+  <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">'line'</span><span class="p">,</span> 
+  <span class="k">this</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+  <span class="k">this</span><span class="p">.</span><span class="nx">end</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span> 
+ <span class="p">}</span>
+ 
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="k">new</span> <span class="nx">line</span><span class="p">());</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<p>Of course this example is not very useful because it only produces a line with the same origin and end every time. 
+Instead, these should be passed as parameters.</p>
+
+<p>Since this is a common scenario, Maker.js provides constructors for all primitive paths: line, circle and arc:</p>
+
+<ul>
+  <li><a href="/maker.js/docs/api/classes/makerjs.paths.line.html#constructor">makerjs.paths.Line</a></li>
+  <li><a href="/maker.js/docs/api/classes/makerjs.paths.circle.html#constructor">makerjs.paths.Circle</a></li>
+  <li><a href="/maker.js/docs/api/classes/makerjs.paths.arc.html#constructor">makerjs.paths.Arc</a></li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render the basic paths</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Circle</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">50</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">arc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Arc</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">);</span>
+ 
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">([</span><span class="nx">line</span><span class="p">,</span> <span class="nx">circle</span><span class="p">,</span> <span class="nx">arc</span><span class="p">]);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/path-constructors.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Path independence and Chains" ></a>
+    <h3>Path independence and Chains</h3>
+    <div class="tsd-comment tsd-typography"><p>
+All paths in a drawing are atomic elements of either line, arc, or circle. Paths may happen to touch each other or they may not.
+When any two paths have the same endpoint, this is called a <b>chain</b>. A chain can continue with any number of paths that meet end to end.
+If the chain begins and ends at the same point, this is called an <b>endless chain</b>.
+</p>
+<p>
+Chains are an important concept that we will build upon, yet they are not a thing that you specify in your code.
+Rather, chains are "found" by Maker.js when it processes your drawing model.
+Paths in your drawing model are independent elements which may be added, modified or deleted by you or another developer.
+As you work with paths, bear in mind that you are also implicitly working with chains.
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model that nas no chains</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"h1"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">]),</span>
+    <span class="s2">"h2"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">]),</span>
+    <span class="s2">"v1"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">]),</span>
+    <span class="s2">"v2"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+  <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model with paths that form a chain</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"0"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="s2">"1"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">]),</span>
+    <span class="s2">"2"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">]),</span>
+  <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model with paths that form an endless chain</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"v"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">]),</span>
+    <span class="s2">"h"</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Line</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="s2">"arc"</span><span class="p">:</span><span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Arc</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+  <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/path-independence.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Built-in models" ></a>
+    <h3>Built-in models</h3>
+    <div class="tsd-comment tsd-typography"><p>Maker.js provides these fundamental models:</p>
+
+<ul>
+    <li><a href="/maker.js/playground/?script=Belt">Belt</a></li>
+    <li><a href="/maker.js/playground/?script=BezierCurve">Bezier Curve</a></li>
+    <li><a href="/maker.js/playground/?script=BoltCircle">Bolt Circle</a></li>
+    <li><a href="/maker.js/playground/?script=BoltRectangle">Bolt Rectangle</a></li>
+    <li><a href="/maker.js/playground/?script=ConnectTheDots">Connect the dots</a></li>
+    <li><a href="/maker.js/playground/?script=Dome">Dome</a></li>
+    <li><a href="/maker.js/playground/?script=Ellipse">Ellipse</a></li>
+    <li><a href="/maker.js/playground/?script=EllipticArc">Elliptic Arc</a></li>
+    <li><a href="/maker.js/playground/?script=Holes">Holes</a></li>
+    <li><a href="/maker.js/playground/?script=Oval">Oval</a></li>
+    <li><a href="/maker.js/playground/?script=OvalArc">OvalArc</a></li>
+    <li><a href="/maker.js/playground/?script=Polygon">Polygon</a></li>
+    <li><a href="/maker.js/docs/api/classes/makerjs.models.rectangle.html#constructor">Rectangle</a></li>
+    <li><a href="/maker.js/playground/?script=Ring">Ring</a></li>
+    <li><a href="/maker.js/playground/?script=RoundRectangle">RoundRectangle</a></li>
+    <li><a href="/maker.js/playground/?script=SCurve">S curve</a></li>
+    <li><a href="/maker.js/playground/?script=Slot">Slot</a></li>
+    <li><a href="/maker.js/playground/?script=Square">Square</a></li>
+    <li><a href="/maker.js/playground/?script=Star">Star</a></li>
+    <li><a href="/maker.js/playground/?script=Text">Text</a></li>
+</ul>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/built-in-models.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Moving" ></a>
+    <h3>Moving</h3>
+    <div class="tsd-comment tsd-typography"><p>
+    Models and paths can be moved to an absolute location, or moved by an [x, y] amount relative to their current location.
+    Keep in mind that since paths are contained within models, and models may be contained within models, that their coordinates will be relative to the containing model.
+</p>
+
+<p>
+    To illustrate this, let's create a model that has a few squares:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//create some squares side by side</span>
+
+<span class="kd">function</span> <span class="nx">Squares</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="na">s1</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+
+        <span class="c1">//calling makerjs.model.move and creating a model all on one line of code.</span>
+        <span class="na">s2</span><span class="p">:</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+
+        <span class="na">s3</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="p">};</span>
+
+    <span class="c1">//move the third square by setting its origin property.</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s3</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">240</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">squares</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Squares</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">squares</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    The way to move a model to an absolute position is to set its <b>origin</b> property.
+    The <a href="/maker.js/docs/api/modules/makerjs.model.html#move">makerjs.model.move</a> function does just that, but it also lets you do more operations on one line of code.
+</p>
+
+<p>
+    To move a model by a relative amount, use <a href="/maker.js/docs/api/modules/makerjs.model.html#moverelative">makerjs.model.moveRelative</a>:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//move some squares by a relative distance</span>
+
+<span class="kd">function</span> <span class="nx">Squares</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">s1</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+        <span class="na">s2</span><span class="p">:</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="na">s3</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="p">};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s3</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">240</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">squares</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Squares</span><span class="p">();</span>
+
+<span class="c1">//move some squares by a relative distance</span>
+<span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">moveRelative</span><span class="p">(</span><span class="nx">squares</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]);</span>
+<span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">moveRelative</span><span class="p">(</span><span class="nx">squares</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s3</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">]);</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">squares</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    Likewise, paths can be moved absolutely with <a href="/maker.js/docs/api/modules/makerjs.path.html#move">makerjs.path.move</a>
+    or relatively with <a href="/maker.js/docs/api/modules/makerjs.path.html#moverelative">makerjs.path.moveRelative</a>:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//move some paths within the squares</span>
+
+<span class="kd">function</span> <span class="nx">Squares</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">s1</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+        <span class="na">s2</span><span class="p">:</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="na">s3</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="p">};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s3</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">240</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">squares</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Squares</span><span class="p">();</span>
+
+<span class="c1">//move a path by a relative distance</span>
+<span class="nx">makerjs</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">moveRelative</span><span class="p">(</span><span class="nx">squares</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s3</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">ShapeLine3</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">]);</span>
+
+<span class="c1">//move a path to an absolute point</span>
+<span class="nx">makerjs</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="nx">squares</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">s2</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">ShapeLine1</span><span class="p">,</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">]);</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">squares</span><span class="p">);</span>
+
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    Notice that the 2nd square had an origin of [120, 0] but we moved a line within the square to an absolute point [30, 20]. Since the line is contained within the square model, its
+    coordinates are in terms of the square, which is why it appears to be at [150, 20].
+</p>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/moving.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Basic modeling" ></a>
+    <h3>Basic modeling</h3>
+    <div class="tsd-comment tsd-typography"><p>
+    Given the fundamental models and ability to move instances of them, we can now start modeling. 
+    Here are a few examples to illustrate how you might use these:
+</p>
+
+<p>House:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a simple house using ConnectTheDots and Square</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">points</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">house</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">ConnectTheDots</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">points</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">window1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">40</span><span class="p">);</span>
+<span class="nx">window1</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">window2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Square</span><span class="p">(</span><span class="mi">40</span><span class="p">);</span>
+<span class="nx">window2</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">40</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">houseWithWindows</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"myHouse"</span><span class="p">:</span> <span class="nx">house</span><span class="p">,</span> <span class="s2">"window1"</span><span class="p">:</span> <span class="nx">window1</span><span class="p">,</span> <span class="s2">"window2"</span><span class="p">:</span> <span class="nx">window2</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">houseWithWindows</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Tablet mount:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a tablet frame using BoltRectangle and RoundRectangle</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">outer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">inner</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="nx">inner</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">buttonhole</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Circle</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">bolts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltRectangle</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">bolts</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">tabletFaceMount</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span> <span class="na">buttonhole</span><span class="p">:</span> <span class="nx">buttonhole</span> <span class="p">},</span>
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span> <span class="na">inner</span><span class="p">:</span> <span class="nx">inner</span><span class="p">,</span> <span class="na">outer</span><span class="p">:</span> <span class="nx">outer</span><span class="p">,</span> <span class="na">bolts</span><span class="p">:</span> <span class="nx">bolts</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">tabletFaceMount</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Circular adapter plate:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render an adapter using Ring and BoltCircle</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">ring1</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Ring</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="na">bc1</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltCircle</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="na">bc2</span><span class="p">:</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltCircle</span><span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Skateboard deck:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a skateboard deck using BoltRectangle and Oval</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">truckBolts</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">tx</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">ty</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">bolts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltRectangle</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">ty</span><span class="p">,</span> <span class="mi">7</span><span class="o">/</span><span class="mi">32</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="nx">bolts</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">tx</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="nx">ty</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">[</span><span class="nx">bolts</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">deck</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">length</span><span class="p">,</span> <span class="nx">truckOffset</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">board</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Oval</span><span class="p">(</span><span class="nx">length</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  <span class="nx">board</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+
+  <span class="kd">var</span> <span class="nx">truck1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">truckBolts</span><span class="p">();</span>
+  <span class="nx">truck1</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">truckOffset</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+
+  <span class="kd">var</span> <span class="nx">truck2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">truckBolts</span><span class="p">();</span>
+  <span class="nx">truck2</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">truckOffset</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span> <span class="na">board</span><span class="p">:</span> <span class="nx">board</span><span class="p">,</span> <span class="na">truck1</span><span class="p">:</span> <span class="nx">truck1</span><span class="p">,</span> <span class="na">truck2</span><span class="p">:</span> <span class="nx">truck2</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="k">new</span> <span class="nx">deck</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">7</span><span class="p">));</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/modeling.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="It's Just JSON" ></a>
+    <h3>It's Just JSON</h3>
+    <div class="tsd-comment tsd-typography"><p>
+    Remember that your models are plain old JavaScript objects. This is also true for the basic models included with Maker.js we've seen above.
+    To illustrate this, we will export a model using JSON.stringify. Let's use the Tablet Mount again as our example:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">outer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">inner</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="nx">inner</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">buttonhole</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Circle</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">bolts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltRectangle</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">bolts</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">tabletFaceMount</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span> <span class="na">buttonhole</span><span class="p">:</span> <span class="nx">buttonhole</span> <span class="p">},</span>
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span> <span class="na">inner</span><span class="p">:</span> <span class="nx">inner</span><span class="p">,</span> <span class="na">outer</span><span class="p">:</span> <span class="nx">outer</span><span class="p">,</span> <span class="na">bolts</span><span class="p">:</span> <span class="nx">bolts</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">tabletFaceMount</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    Now let's pass tabletFaceMount through JSON.stringify and look at the result:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">outer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">inner</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">RoundRectangle</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="nx">inner</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">buttonhole</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Circle</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">bolts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltRectangle</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">bolts</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">tabletFaceMount</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">paths</span><span class="p">:</span> <span class="p">{</span> <span class="na">buttonhole</span><span class="p">:</span> <span class="nx">buttonhole</span> <span class="p">},</span>
+  <span class="na">models</span><span class="p">:</span> <span class="p">{</span> <span class="na">inner</span><span class="p">:</span> <span class="nx">inner</span><span class="p">,</span> <span class="na">outer</span><span class="p">:</span> <span class="nx">outer</span><span class="p">,</span> <span class="na">bolts</span><span class="p">:</span> <span class="nx">bolts</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">tabletFaceMount</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">'&lt;code&gt;'</span> <span class="o">+</span> <span class="nx">json</span> <span class="o">+</span> <span class="s1">'&lt;/code&gt;&lt;hr /&gt;'</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    We can copy and paste this same JSON and re-use it directly as a model:
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render from a blob of JSON</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">tabletFaceMount</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"paths"</span><span class="p">:{</span><span class="s2">"buttonhole"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">100</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"circle"</span><span class="p">}},</span><span class="s2">"models"</span><span class="p">:{</span><span class="s2">"inner"</span><span class="p">:{</span><span class="s2">"paths"</span><span class="p">:{</span><span class="s2">"BottomLeft"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">180</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">270</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"BottomRight"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">152</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">270</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"TopRight"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">152</span><span class="p">,</span><span class="mi">222</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"TopLeft"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">222</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">180</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"Bottom"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">152</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Top"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">152</span><span class="p">,</span><span class="mi">230</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">230</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Right"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">160</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">160</span><span class="p">,</span><span class="mi">222</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Left"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">222</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">}},</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">]},</span><span class="s2">"outer"</span><span class="p">:{</span><span class="s2">"paths"</span><span class="p">:{</span><span class="s2">"BottomLeft"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">180</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">270</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"BottomRight"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">192</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">270</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"TopRight"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">192</span><span class="p">,</span><span class="mi">272</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"TopLeft"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">272</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s2">"startAngle"</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s2">"endAngle"</span><span class="p">:</span><span class="mi">180</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"arc"</span><span class="p">},</span><span class="s2">"Bottom"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">192</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Top"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">192</span><span class="p">,</span><span class="mi">280</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">8</span><span class="p">,</span><span class="mi">280</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Right"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">200</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">200</span><span class="p">,</span><span class="mi">272</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">},</span><span class="s2">"Left"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">272</span><span class="p">],</span><span class="s2">"end"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"line"</span><span class="p">}}},</span><span class="s2">"bolts"</span><span class="p">:{</span><span class="s2">"paths"</span><span class="p">:{</span><span class="s2">"BottomLeft_bolt"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"circle"</span><span class="p">},</span><span class="s2">"BottomRight_bolt"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">180</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"circle"</span><span class="p">},</span><span class="s2">"TopRight_bolt"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">180</span><span class="p">,</span><span class="mi">260</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"circle"</span><span class="p">},</span><span class="s2">"TopLeft_bolt"</span><span class="p">:{</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">260</span><span class="p">],</span><span class="s2">"radius"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">"type"</span><span class="p">:</span><span class="s2">"circle"</span><span class="p">}},</span><span class="s2">"origin"</span><span class="p">:[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]}}};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">tabletFaceMount</span><span class="p">);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>
+    Note that you might obtain JSON from some other source, perhaps generated by a tool. The only requirement for it to work with Maker.js is it must have the properties as described above.
+</p>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/just-json.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Units" ></a>
+    <h3>Units</h3>
+    <div class="tsd-comment tsd-typography"><p>
+Paths and points are unitless. Models may also be unitless, or they may specify a unit system. When it comes time to make your model 
+on a laser cutter or waterjet etc., you will probably want to specify units. You can do this two different ways:
+  <ol>
+    <li>Specify units during export. [<a href="http://microsoft.github.io/maker.js/docs/exporting/#content">See exporting for details per format.</a>]</li>
+    <li>Specify units on your model.</li>
+  </ol>
+</p>
+<p>
+  To specify units on your model, add a <code>units</code> property to it with a value from the <b>makerjs.unitType</b> object:
+</p>
+
+<ul>
+  <li>Centimeter</li>
+  <li>Foot</li>
+  <li>Inch</li>
+  <li>Meter</li>
+  <li>Millimeter</li>
+</ul>
+
+<p>These properties are case sensitive. They contain the values "cm", "foot", "inch", "m" and "mm" respectively. 
+It is your choice whether to use the named property or the string value directly.</p>
+
+<p>If a model that you wish to use has a different unit system than your own model, you can call 
+<b>makerjs.model.convertUnits(modeltoScale: model, units: string)</b>. to convert it. This function will return the scaled model for chaining.</p>
+
+<p>Let's use our skateboard example above and mix Inch and Centimeter units:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render a model using mixed units</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">truckBolts</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">tx</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">ty</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">bolts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">BoltRectangle</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">ty</span><span class="p">,</span> <span class="mi">7</span><span class="o">/</span><span class="mi">32</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="nx">bolts</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">tx</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="nx">ty</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">units</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">unitType</span><span class="p">.</span><span class="nx">Inch</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">[</span><span class="nx">bolts</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">deck</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">length</span><span class="p">,</span> <span class="nx">truckOffset</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">units</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">unitType</span><span class="p">.</span><span class="nx">Centimeter</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">board</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Oval</span><span class="p">(</span><span class="nx">length</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  <span class="nx">board</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span> <span class="o">/</span> <span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+    
+  <span class="kd">var</span> <span class="nx">truck1</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">convertUnits</span><span class="p">(</span><span class="k">new</span> <span class="nx">truckBolts</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">units</span><span class="p">);</span>
+  <span class="nx">truck1</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">truckOffset</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+    
+  <span class="kd">var</span> <span class="nx">truck2</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">convertUnits</span><span class="p">(</span><span class="k">new</span> <span class="nx">truckBolts</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">units</span><span class="p">);</span>
+  <span class="nx">truck2</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="p">[</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">truckOffset</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span> <span class="na">board</span><span class="p">:</span> <span class="nx">board</span><span class="p">,</span> <span class="na">truck1</span><span class="p">:</span> <span class="nx">truck1</span><span class="p">,</span> <span class="na">truck2</span><span class="p">:</span> <span class="nx">truck2</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="k">new</span> <span class="nx">deck</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">18</span><span class="p">));</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/units.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Measuring" ></a>
+    <h3>Measuring</h3>
+    <div class="tsd-comment tsd-typography"><p>
+    Browse to the <a href="../api/modules/makerjs.measure.html">makerjs.measure</a> module documentation to see all functions related to measuring.
+</p>
+
+<p>
+To get the bounding rectangle of a path or a model, use:
+</p>
+
+<ul>
+  <li>makerjs.measure.pathExtents(path: object)</li>
+  <li>makerjs.model.modelExtents(model: object)</li>
+</ul>
+
+<p>These functions return a measurement object with <b>high</b> and <b>low</b> points.</p>
+
+<p>Measure path example:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render an arc, and a measurement reactangle around it</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">arc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">paths</span><span class="p">.</span><span class="nx">Arc</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">135</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">measure</span><span class="p">.</span><span class="nx">pathExtents</span><span class="p">(</span><span class="nx">arc</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'measurement:'</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">totalWidth</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">high</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">totalHeight</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">high</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">measureRect</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Rectangle</span><span class="p">(</span><span class="nx">totalWidth</span><span class="p">,</span> <span class="nx">totalHeight</span><span class="p">);</span>
+<span class="nx">measureRect</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">paths</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">arc</span><span class="p">:</span> <span class="nx">arc</span>
+    <span class="p">},</span>
+    <span class="na">models</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">measureRect</span><span class="p">:</span> <span class="nx">measureRect</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="p">{</span><span class="na">useSvgPathOnly</span><span class="p">:</span> <span class="kc">false</span><span class="p">});</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+
+<p>Measure model example:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//render an oval, and a measurement reactangle around it</span>
+
+<span class="kd">var</span> <span class="nx">makerjs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'makerjs'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">oval</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Oval</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+<span class="nx">makerjs</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">rotate</span><span class="p">(</span><span class="nx">oval</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">measure</span><span class="p">.</span><span class="nx">modelExtents</span><span class="p">(</span><span class="nx">oval</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'measurement:'</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">totalWidth</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">high</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">totalHeight</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">high</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">measureRect</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Rectangle</span><span class="p">(</span><span class="nx">totalWidth</span><span class="p">,</span> <span class="nx">totalHeight</span><span class="p">);</span>
+<span class="nx">measureRect</span><span class="p">.</span><span class="nx">origin</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">low</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">models</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">measureRect</span><span class="p">:</span> <span class="nx">measureRect</span><span class="p">,</span>
+        <span class="na">oval</span><span class="p">:</span> <span class="nx">oval</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">makerjs</span><span class="p">.</span><span class="nx">exporter</span><span class="p">.</span><span class="nx">toSVG</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="p">{</span><span class="na">useSvgPathOnly</span><span class="p">:</span> <span class="kc">false</span><span class="p">});</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">svg</span><span class="p">);</span></code></pre></figure>
+
+<script>
+    LiveDoc.evalLastCode();
+</script>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/measuring.html" class="edit-source">edit on GitHub</a>
+
+</section><section class="tsd-panel tsd-member">
+    <a name="Frequently used functions" ></a>
+    <h3>Frequently used functions</h3>
+    <div class="tsd-comment tsd-typography"><p>
+    It's good to be aware of these functions which apply to many drawing scenarios. Also, browse the APIs of each module for lesser used specialized functions.
+</p>
+
+<h4>
+    Functions for working with points in the <a href="/maker.js/docs/api/modules/makerjs.point.html#content">makerjs.point</a> module:
+</h4>
+
+<ul>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#add">point.add</a>
+        <p>Add two points together and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#subtract">point.subtract</a>
+        <p>Subtract a point from another point and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#average">point.average</a>
+        <p>Get the average of two points and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#frompolar">point.fromPolar</a>
+        <p>Get a point from its polar coordinates: angle (in radians) and radius.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#closest">point.closest</a>
+        <p>Given a reference point and an array of points, find the closest point in the array to the reference point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#scale">point.scale</a>
+        <p>Proportionately scale a point and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#distort">point.distort</a>
+        <p>Disproportionately scale a point and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#rotate">point.rotate</a>
+        <p>Rotate a point and return the result as a new point.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.point.html#frompathends">point.fromPathEnds</a>
+        <p>Return the two end points of a given path (null if path is a circle).</p>
+    </li>
+</ul>
+
+<h4>
+    Functions for working with angles in the <a href="/maker.js/docs/api/modules/makerjs.angle.html#content">makerjs.angle</a> module:
+</h4>
+
+<ul>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#todegrees">angle.toDegrees</a>
+        <p>Convert an angle from radians to degrees.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#toradians">angle.toRadians</a>
+        <p>Convert an angle from degrees to radians.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#oflineindegrees">angle.ofLineInDegrees</a>
+        <p>Given a line, returns its angle in degrees.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#ofpointindegrees">angle.ofPointInDegrees</a>
+        <p>Given two points, returns the angle of the line through them, in degrees.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#ofpointinradians">angle.ofPointInRadians</a>
+        <p>Given two points, returns the angle of the line through them, in radians.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#norevolutions">angle.noRevolutions</a>
+        <p>Given a polar angle in degrees, returns the same angle cast between -360 and 360. For example, 725 degrees = 5 degrees.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.angle.html#ofarcspan">angle.ofArcSpan</a>
+        <p>Given an arc, returns total angle span between its start and end angles.</p>
+    </li>
+</ul>
+
+<h4>
+    Functions for working with measurements in the <a href="/maker.js/docs/api/modules/makerjs.measure.html#content">makerjs.measure</a> module:
+</h4>
+
+<ul>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.measure.html#pointdistance">measure.pointDistance</a>
+        <p>Calculates the distance between two points using the Pythagorean theorem.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.measure.html#pathlength">measure.pathLength</a>
+        <p>Measures the length of a path.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.measure.html#ispointequal">measure.isPointEqual</a>
+        <p>Given two points, determine if they are equal within a distance of accuracy.</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.measure.html#ismeasurementoverlapping">measure.isMeasurementOverlapping</a>
+        <p>Given two measurements, determine if they are overlapping. Also known as "bounding box overlap".</p>
+    </li>
+    <li>
+        <a href="/maker.js/docs/api/modules/makerjs.measure.html#isangleequal">measure.isAngleEqual</a>
+        <p>Given two angles, determine if they are equal within a margin of accuracy.</p>
+    </li>
+</ul>
+</div>
+
+    <a href="https://github.com/Microsoft/maker.js/blob/gh-pages/_snippets/frequently-used-functions.html" class="edit-source">edit on GitHub</a>
+
+</section>
+
+</section>
+
+</div>
+
+<!-- after JSON: Cloning -->
+
+<section class="tsd-panel">
+
+    <p>Next: learn more in <a href="../intermediate-drawing/#content">Intermediate drawing</a>.</p>
+
+</section>
+
+
+
+
+            </section>
+
+            <footer>
+                <a href="https://github.com/Microsoft">
+                    <img src="/maker.js/playground/microsoft.png">
+                </a>
+                <a href="https://github.com/Microsoft">Open source, from Microsoft with love.</a>
+                <a href="http://aka.ms/privacy">Privacy Statement</a> ©2016 Microsoft
+            </footer>
+
+        </div>
+    </div>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-64624544-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+</body>
+</html>
