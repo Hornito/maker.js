@@ -15,6 +15,21 @@
     <script type="text/javascript" src="/maker.js/external/bezier-js/bezier.js"></script>
     <script type="text/javascript" src="/maker.js/external/opentype/opentype.js"></script>
     <script type="text/javascript" src="/maker.js/docgen/livedoc.js"></script>
+
+<script type="text/javascript">
+	var toSVG = makerjs.exporter.toSVG;
+	makerjs.exporter.toSVG = function(item, options) {
+		if (makerjs.isModel(item)) {
+			var m = makerjs.measure.modelExtents(item);
+			if (!options) {
+				options = {};
+			}
+			options.strokeWidth = (m.height / 100) + 'px';
+		}
+		return toSVG(item, options);
+	}
+</script>
+	  
 </head>
 
 <body>
